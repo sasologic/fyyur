@@ -14,7 +14,7 @@ from flask_wtf import Form
 from sqlalchemy import ForeignKey
 from forms import *
 from flask_migrate import Migrate
-from models import Venue, Artist, Show
+from models import Venue, Artist, Show, db
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -24,8 +24,7 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
 moment = Moment(app)
-db = SQLAlchemy(app)
-
+db.init_app(app)
 migrate = Migrate(app, db)
 
 
@@ -206,7 +205,7 @@ def create_venue_submission():
     address = form.address.data
     phone = form.phone.data
     image_link = form.image_link.data
-    genres = '.'.join(form.genres.data)
+    genres =  request.form.getlist('genres')
     facebook_link = form.facebook_link.data
     website_link = form.website_link.data
     seeking_talent = form.seeking_talent.data
@@ -301,7 +300,7 @@ def search_artists():
     data.append({
       "id": artist.id,
       "name": artist.name,
-      "num_upcoming_shows": len(num_upcoming_shows)
+      "num_upcoming_shows": num_upcoming_shows
    } )
     
   search_results.append({
@@ -404,7 +403,7 @@ def edit_artist_submission(artist_id):
   
   try:
     name = form.name.data
-    genres = ('.').join(form.genres.data)
+    genres = request.form.getlist('genres')
     city = form.city.data
     state = form.state.data
     phone = form.phone.data
@@ -481,7 +480,7 @@ def edit_venue_submission(venue_id):
     address = form.address.data
     phone = form.phone.data
     image_link = form.image_link.data
-    genres = '.'.join(form.genres.data)
+    genres = request.form.getlist('genres')
     facebook_link = form.facebook_link.data
     website_link = form.website_link.data
     seeking_talent = form.seeking_talent.data
@@ -534,7 +533,7 @@ def create_artist_submission():
     state = form.state.data
     phone = form.phone.data
     image_link = form.image_link.data
-    genres = '.'.join(form.genres.data)
+    genres = request.form.getlist('genres')
     facebook_link = form.facebook_link.data
     website_link = form.website_link.data
     seeking_venue = form.seeking_venue.data
